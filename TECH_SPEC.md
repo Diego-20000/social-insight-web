@@ -1,8 +1,8 @@
-# Especificaciones Técnicas - Social Insight
+# Especificaciones Técnicas - Nexus IG Analyzer
 
 ## 📋 Resumen Ejecutivo
 
-Social Insight es una aplicación web de análisis de datos de Instagram que procesa información exportada por el usuario y proporciona visualizaciones interactivas y análisis detallados.
+**Nexus IG Analyzer** es una aplicación web de análisis de datos de Instagram que procesa información exportada por el usuario y proporciona visualizaciones interactivas y análisis detallados. Es parte del ecosistema **Nexus** de Art Programs Studio, conectada a un servidor central para autenticación y gestión de suscripciones.
 
 ## 🏗️ Arquitectura
 
@@ -81,6 +81,13 @@ Funciones clave:
 - ✅ No se envía información a servidores externos
 - ✅ No hay almacenamiento persistente de datos
 - ✅ Los datos se limpian al cerrar la sesión
+- ✅ **No requiere contraseña de Instagram** - solo archivo JSON exportado
+
+### Comunicación con Servidor
+- Solo se envían tokens JWT y datos de usuario
+- Información de Instagram nunca sale del navegador
+- HTTPS obligatorio
+- Validación en servidor de todas las requests
 
 ### Validación de Datos
 - Validación de estructura JSON
@@ -125,13 +132,18 @@ Funciones clave:
 - Grid adaptativo
 - Flexbox para layouts
 
-## 📱 Compatibilidad
+## 💁 Compatibilidad
 
 ### Navegadores Soportados
 - Chrome 90+
 - Firefox 88+
 - Safari 14+
 - Edge 90+
+
+### Dependencias Externas
+- Nexus Server (para autenticación y suscripciones)
+- Chart.js (CDN)
+- Ninguna otra dependencia de runtime
 
 ### Dispositivos
 - Desktop (1920x1080+)
@@ -216,4 +228,28 @@ npm run preview
 
 **Versión**: 1.0.0  
 **Última actualización**: Febrero 2026  
-**Autor**: Diego
+**Empresa**: Art Programs Studio  
+**Ecosistema**: Nexus
+
+---
+
+## 🔗 Integración con Nexus Server
+
+Nexus IG Analyzer se conecta con el servidor central para:
+
+### Autenticación
+- Verificar credenciales de Nexus Account
+- Mantener sesiones sincronizadas
+- Renovar tokens JWT
+
+### Verificación de Suscripción
+- Verificar si usuario tiene acceso premium activo
+- Bloquear acceso si suscripción expiró
+- Mostrar opción de canjear puntos
+
+### Endpoints Utilizados
+```
+GET  /api/auth/verify          - Verificar token
+GET  /api/subscriptions/active - Verificar suscripción IG Analyzer
+POST /api/subscriptions/redeem - Canjear puntos
+```
