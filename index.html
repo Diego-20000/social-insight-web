@@ -2,134 +2,262 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#0B1C2D">
+    <meta name="description" content="Social Insight - Análisis profundo y premium de tu cuenta de Instagram">
     <title>Social Insight - Análisis Premium de Instagram</title>
     <link rel="stylesheet" href="src/styles.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
-    <!-- Header Premium -->
-    <header>
-        <div class="header-content">
-            <span class="logo">📊</span>
-            <div>
-                <h1>Social Insight</h1>
-                <p class="subtitle">Análisis profundo de tu cuenta de Instagram</p>
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="loading-container">
+            <div class="loading-logo">📊</div>
+            <div class="loading-text">Social Insight</div>
+            <div class="loading-bar">
+                <div class="loading-progress"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Header -->
+    <header class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-brand">
+                <span class="brand-icon">📊</span>
+                <h1 class="brand-name">Social Insight</h1>
+            </div>
+            <nav class="navbar-nav">
+                <button class="nav-item active" data-section="upload">Cargar</button>
+                <button class="nav-item" data-section="analytics">Análisis</button>
+                <button class="nav-item" data-section="lists">Listas</button>
+                <button class="nav-item" data-section="report">Reporte</button>
+            </nav>
+            <div class="navbar-actions">
+                <button class="theme-toggle" id="themeToggle" title="Cambiar tema">🌙</button>
             </div>
         </div>
     </header>
 
-    <!-- Main Container -->
-    <div class="container">
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <h2 class="hero-title">Análisis Profundo de Instagram</h2>
+                <p class="hero-subtitle">Descubre quién no te sigue de vuelta, estadísticas detalladas y más</p>
+            </div>
+        </section>
+
         <!-- Upload Section -->
-        <section class="upload-section">
-            <h2>Sube tu archivo JSON de Instagram</h2>
-            <p>Exporta tus datos desde Instagram y cárgalos aquí para análisis profundo</p>
-            
-            <div class="file-input-wrapper">
-                <input type="file" id="fileInput" accept=".json">
-                <button onclick="document.getElementById('fileInput').click()">
-                    📁 Selecciona archivo JSON
-                </button>
-            </div>
-            
-            <p id="loadingStatus" class="loading hidden">Procesando datos...</p>
-        </section>
-
-        <!-- Stats Grid -->
-        <div id="statsSection" class="stats-grid hidden">
-            <div class="stat-card">
-                <div class="stat-icon">👥</div>
-                <div class="stat-label">Seguidores</div>
-                <div class="stat-value" id="followersCount">0</div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-icon">🔗</div>
-                <div class="stat-label">Siguiendo</div>
-                <div class="stat-value" id="followingCount">0</div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-icon">❌</div>
-                <div class="stat-label">No te siguen de vuelta</div>
-                <div class="stat-value" id="notFollowingBackCount">0</div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-icon">✅</div>
-                <div class="stat-label">Te siguen pero no los sigues</div>
-                <div class="stat-value" id="youDontFollowCount">0</div>
-            </div>
-        </div>
-
-        <!-- Charts Section -->
-        <section id="chartsSection" class="charts-section hidden">
-            <h2>Visualización de Datos</h2>
-            <div class="charts-grid">
-                <div class="chart-container">
-                    <h3>Distribución de Relaciones</h3>
-                    <canvas id="relationshipChart"></canvas>
+        <section id="uploadSection" class="section upload-section">
+            <div class="section-container">
+                <div class="section-header">
+                    <h2>Importar Datos</h2>
+                    <p>Carga tu archivo JSON exportado desde Instagram</p>
                 </div>
 
-                <div class="chart-container">
-                    <h3>Análisis de Seguimiento</h3>
-                    <canvas id="followAnalysisChart"></canvas>
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">📁</div>
+                    <h3>Arrastra tu archivo aquí</h3>
+                    <p>o haz clic para seleccionar</p>
+                    <input type="file" id="fileInput" accept=".json" hidden>
+                </div>
+
+                <div id="fileInfo" class="file-info hidden">
+                    <div class="file-details">
+                        <span class="file-name" id="fileName"></span>
+                        <span class="file-size" id="fileSize"></span>
+                    </div>
+                    <button class="btn-secondary" onclick="clearFile()">Cambiar archivo</button>
+                </div>
+
+                <div id="processingStatus" class="processing-status hidden">
+                    <div class="spinner"></div>
+                    <p id="statusText">Procesando datos...</p>
                 </div>
             </div>
         </section>
 
-        <!-- Search Section -->
-        <section id="searchSection" class="search-section hidden">
-            <h2>Búsqueda Avanzada</h2>
-            <div class="search-input-wrapper">
-                <input type="text" id="globalSearch" placeholder="Buscar usuario en todas las listas...">
-                <button onclick="performSearch()">🔍 Buscar</button>
+        <!-- Analytics Section -->
+        <section id="analyticsSection" class="section analytics-section hidden">
+            <div class="section-container">
+                <div class="section-header">
+                    <h2>Estadísticas</h2>
+                    <p>Resumen de tu análisis de Instagram</p>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-icon">👥</span>
+                            <span class="stat-label">Seguidores</span>
+                        </div>
+                        <div class="stat-value" id="followersCount">0</div>
+                        <div class="stat-change">+0%</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-icon">🔗</span>
+                            <span class="stat-label">Siguiendo</span>
+                        </div>
+                        <div class="stat-value" id="followingCount">0</div>
+                        <div class="stat-change">+0%</div>
+                    </div>
+
+                    <div class="stat-card warning">
+                        <div class="stat-header">
+                            <span class="stat-icon">❌</span>
+                            <span class="stat-label">No te siguen de vuelta</span>
+                        </div>
+                        <div class="stat-value" id="notFollowingBackCount">0</div>
+                        <div class="stat-change">-0%</div>
+                    </div>
+
+                    <div class="stat-card success">
+                        <div class="stat-header">
+                            <span class="stat-icon">✅</span>
+                            <span class="stat-label">Te siguen pero no los sigues</span>
+                        </div>
+                        <div class="stat-value" id="youDontFollowCount">0</div>
+                        <div class="stat-change">+0%</div>
+                    </div>
+                </div>
+
+                <!-- Charts -->
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h3>Distribución de Relaciones</h3>
+                        <canvas id="relationshipChart"></canvas>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Análisis de Seguimiento</h3>
+                        <canvas id="followAnalysisChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Key Insights -->
+                <div class="insights-card">
+                    <h3>Insights Clave</h3>
+                    <div class="insights-list" id="insightsList"></div>
+                </div>
             </div>
         </section>
 
         <!-- Lists Section -->
-        <section id="listsSection" class="list-section hidden">
-            <h2>Análisis Detallado</h2>
-            
-            <!-- No Follow Back List -->
-            <div class="list-container">
-                <h3 style="color: var(--accent-gold); margin-bottom: 1rem;">❌ No te siguen de vuelta</h3>
-                <div class="search-input-wrapper">
-                    <input type="text" id="notFollowingBackSearch" placeholder="Buscar...">
-                    <button onclick="downloadList('notFollowingBack')">📥 Descargar CSV</button>
+        <section id="listsSection" class="section lists-section hidden">
+            <div class="section-container">
+                <div class="section-header">
+                    <h2>Análisis Detallado</h2>
+                    <p>Listas completas y filtradas de usuarios</p>
                 </div>
-                <div id="notFollowingBackList" class="list-container"></div>
-            </div>
 
-            <!-- You Don't Follow List -->
-            <div class="list-container" style="margin-top: 2rem;">
-                <h3 style="color: var(--accent-gold); margin-bottom: 1rem;">✅ Te siguen pero no los sigues</h3>
-                <div class="search-input-wrapper">
-                    <input type="text" id="youDontFollowSearch" placeholder="Buscar...">
-                    <button onclick="downloadList('youDontFollow')">📥 Descargar CSV</button>
+                <!-- Tabs -->
+                <div class="tabs">
+                    <button class="tab-button active" data-tab="notFollowingBack">No te siguen de vuelta</button>
+                    <button class="tab-button" data-tab="youDontFollow">Te siguen pero no los sigues</button>
                 </div>
-                <div id="youDontFollowList" class="list-container"></div>
+
+                <!-- Tab Content -->
+                <div class="tab-content">
+                    <!-- Not Following Back Tab -->
+                    <div id="notFollowingBackTab" class="tab-pane active">
+                        <div class="list-controls">
+                            <div class="search-box">
+                                <input type="text" id="notFollowingBackSearch" placeholder="🔍 Buscar usuario...">
+                                <span class="search-count" id="notFollowingBackCount2">0 usuarios</span>
+                            </div>
+                            <button class="btn-primary" onclick="downloadList('notFollowingBack')">
+                                📥 Descargar CSV
+                            </button>
+                        </div>
+                        <div id="notFollowingBackList" class="user-list"></div>
+                    </div>
+
+                    <!-- You Don't Follow Tab -->
+                    <div id="youDontFollowTab" class="tab-pane">
+                        <div class="list-controls">
+                            <div class="search-box">
+                                <input type="text" id="youDontFollowSearch" placeholder="🔍 Buscar usuario...">
+                                <span class="search-count" id="youDontFollowCount2">0 usuarios</span>
+                            </div>
+                            <button class="btn-primary" onclick="downloadList('youDontFollow')">
+                                📥 Descargar CSV
+                            </button>
+                        </div>
+                        <div id="youDontFollowList" class="user-list"></div>
+                    </div>
+                </div>
             </div>
         </section>
 
         <!-- Report Section -->
-        <section id="reportSection" class="report-section hidden">
-            <h2>Reporte Completo</h2>
-            <div class="report-text" id="reportText"></div>
-            <div class="download-buttons">
-                <button onclick="downloadReport('txt')">📄 Descargar Reporte TXT</button>
-                <button onclick="downloadReport('json')">📋 Descargar Datos JSON</button>
+        <section id="reportSection" class="section report-section hidden">
+            <div class="section-container">
+                <div class="section-header">
+                    <h2>Reporte Completo</h2>
+                    <p>Exporta tu análisis en múltiples formatos</p>
+                </div>
+
+                <div class="report-preview">
+                    <div class="report-text" id="reportText"></div>
+                </div>
+
+                <div class="export-buttons">
+                    <button class="btn-primary" onclick="downloadReport('txt')">
+                        📄 Descargar TXT
+                    </button>
+                    <button class="btn-primary" onclick="downloadReport('json')">
+                        📋 Descargar JSON
+                    </button>
+                    <button class="btn-secondary" onclick="copyReport()">
+                        📋 Copiar al Portapapeles
+                    </button>
+                </div>
             </div>
         </section>
-    </div>
+
+        <!-- Empty State -->
+        <section id="emptyState" class="empty-state">
+            <div class="empty-state-content">
+                <div class="empty-state-icon">📊</div>
+                <h3>Sin datos cargados</h3>
+                <p>Carga tu archivo JSON de Instagram para comenzar el análisis</p>
+            </div>
+        </section>
+    </main>
 
     <!-- Footer -->
-    <footer>
-        <p>&copy; 2026 Social Insight - Art Programs Studio</p>
-        <p>Análisis 100% local. Tus datos nunca se envían a servidores.</p>
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Social Insight</h4>
+                <p>Análisis profundo de Instagram con privacidad garantizada</p>
+            </div>
+            <div class="footer-section">
+                <h4>Información</h4>
+                <ul>
+                    <li><a href="#privacy">Privacidad</a></li>
+                    <li><a href="#terms">Términos</a></li>
+                    <li><a href="#about">Acerca de</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Empresa</h4>
+                <p>Art Programs Studio</p>
+                <p class="footer-note">© 2026 Social Insight. Todos los derechos reservados.</p>
+            </div>
+        </div>
     </footer>
 
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Scripts -->
     <script type="module" src="src/main.js"></script>
 </body>
 </html>
