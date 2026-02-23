@@ -1,147 +1,91 @@
-/* ============================================
-   SOCIAL INSIGHT - MAIN APPLICATION LOGIC
-   ============================================ */
+// Social Insight - Main Application
+// ================================
 
-// State Management
-const appState = {
-  data: null,
+const app = {
   followers: [],
   following: [],
   notFollowingBack: [],
   youDontFollow: [],
-  charts: {},
-  filteredData: {
-    notFollowingBack: [],
-    youDontFollow: []
-  }
+  charts: {}
 };
 
-// DOM Elements
-const elements = {
-  loadingScreen: document.getElementById('loadingScreen'),
-  uploadArea: document.getElementById('uploadArea'),
-  fileInput: document.getElementById('fileInput'),
-  fileInfo: document.getElementById('fileInfo'),
-  processingStatus: document.getElementById('processingStatus'),
-  
-  // Sections
-  uploadSection: document.getElementById('uploadSection'),
-  analyticsSection: document.getElementById('analyticsSection'),
-  listsSection: document.getElementById('listsSection'),
-  reportSection: document.getElementById('reportSection'),
-  emptyState: document.getElementById('emptyState'),
-  
-  // Stats
-  followersCount: document.getElementById('followersCount'),
-  followingCount: document.getElementById('followingCount'),
-  notFollowingBackCount: document.getElementById('notFollowingBackCount'),
-  youDontFollowCount: document.getElementById('youDontFollowCount'),
-  
-  // Charts
-  relationshipChart: document.getElementById('relationshipChart'),
-  followAnalysisChart: document.getElementById('followAnalysisChart'),
-  
-  // Lists
-  notFollowingBackList: document.getElementById('notFollowingBackList'),
-  youDontFollowList: document.getElementById('youDontFollowList'),
-  notFollowingBackSearch: document.getElementById('notFollowingBackSearch'),
-  youDontFollowSearch: document.getElementById('youDontFollowSearch'),
-  
-  // Report
-  reportText: document.getElementById('reportText'),
-  
-  // Navigation
-  navItems: document.querySelectorAll('.nav-item'),
-  tabButtons: document.querySelectorAll('.tab-button'),
-  
-  // Toast
-  toast: document.getElementById('toast')
-};
-
-// ============================================
-// INITIALIZATION
-// ============================================
-
-document.addEventListener('DOMContentLoaded', () => {
-  initializeEventListeners();
+// Initialize on DOM ready
+document.addEventListener('DOMContentLoaded', function() {
+  setupEventListeners();
   hideLoadingScreen();
 });
 
-function initializeEventListeners() {
-  // File Upload
-  elements.uploadArea.addEventListener('click', () => elements.fileInput.click());
-  elements.uploadArea.addEventListener('dragover', handleDragOver);
-  elements.uploadArea.addEventListener('dragleave', handleDragLeave);
-  elements.uploadArea.addEventListener('drop', handleDrop);
-  elements.fileInput.addEventListener('change', handleFileSelect);
+function setupEventListeners() {
+  // Upload area
+  const uploadArea = document.getElementById('uploadArea');
+  const fileInput = document.getElementById('fileInput');
   
+  if (uploadArea && fileInput) {
+    uploadArea.addEventListener('click', () => fileInput.click());
+    uploadArea.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      uploadArea.classList.add('dragover');
+    });
+    uploadArea.addEventListener('dragleave', () => {
+      uploadArea.classList.remove('dragover');
+    });
+    uploadArea.addEventListener('drop', (e) => {
+      e.preventDefault();
+      uploadArea.classList.remove('dragover');
+      if (e.dataTransfer.files.length > 0) {
+        handleFileUpload(e.dataTransfer.files[0]);
+      }
+    });
+    fileInput.addEventListener('change', (e) => {
+      if (e.target.files.length > 0) {
+        handleFileUpload(e.target.files[0]);
+      }
+    });
+  }
+
   // Navigation
-  elements.navItems.forEach(item => {
-    item.addEventListener('click', (e) => handleNavigation(e.target.dataset.section));
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('click', (e) => {
+      const section = e.target.dataset.section;
+      navigateToSection(section);
+    });
   });
-  
+
   // Tabs
-  elements.tabButtons.forEach(button => {
-    button.addEventListener('click', (e) => handleTabChange(e.target.dataset.tab));
+  document.querySelectorAll('.tab-button').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const tab = e.target.dataset.tab;
+      switchTab(tab);
+    });
   });
-  
+
   // Search
-  elements.notFollowingBackSearch.addEventListener('input', () => filterList('notFollowingBack'));
-  elements.youDontFollowSearch.addEventListener('input', () => filterList('youDontFollow'));
-}
-
-// ============================================
-// FILE HANDLING
-// ============================================
-
-function handleDragOver(e) {
-  e.preventDefault();
-  e.stopPropagation();
-  elements.uploadArea.classList.add('dragover');
-}
-
-function handleDragLeave(e) {
-  e.preventDefault();
-  e.stopPropagation();
-  elements.uploadArea.classList.remove('dragover');
-}
-
-function handleDrop(e) {
-  e.preventDefault();
-  e.stopPropagation();
-  elements.uploadArea.classList.remove('dragover');
+  const notFollowingBackSearch = document.getElementById('notFollowingBackSearch');
+  const youDontFollowSearch = document.getElementById('youDontFollowSearch');
   
-  const files = e.dataTransfer.files;
-  if (files.length > 0) {
-    processFile(files[0]);
+  if (notFollowingBackSearch) {
+    notFollowingBackSearch.addEventListener('input', () => filterList('notFollowingBack'));
+  }
+  if (youDontFollowSearch) {
+    youDontFollowSearch.addEventListener('input', () => filterList('youDontFollow'));
   }
 }
 
-function handleFileSelect(e) {
-  const files = e.target.files;
-  if (files.length > 0) {
-    processFile(files[0]);
-  }
-}
-
-function processFile(file) {
+function handleFileUpload(file) {
   if (!file.name.endsWith('.json')) {
     showToast('Por favor selecciona un archivo JSON válido', 'error');
     return;
   }
-  
+
   const reader = new FileReader();
   reader.onload = (e) => {
     try {
-      showProcessing(true);
-      const jsonData = JSON.parse(e.target.result);
-      processInstagramData(jsonData);
+      const data = JSON.parse(e.target.result);
+      processData(data);
       showFileInfo(file);
     } catch (error) {
       showToast('Error al procesar el archivo JSON', 'error');
       console.error(error);
-    } finally {
-      showProcessing(false);
     }
   };
   reader.readAsText(file);
@@ -149,220 +93,213 @@ function processFile(file) {
 
 function showFileInfo(file) {
   const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
-  document.getElementById('fileName').textContent = file.name;
-  document.getElementById('fileSize').textContent = `${sizeMB} MB`;
-  elements.fileInfo.classList.remove('hidden');
-  elements.uploadArea.classList.add('hidden');
+  const fileInfo = document.getElementById('fileInfo');
+  const uploadArea = document.getElementById('uploadArea');
+  
+  if (fileInfo) {
+    document.getElementById('fileName').textContent = file.name;
+    document.getElementById('fileSize').textContent = `${sizeMB} MB`;
+    fileInfo.classList.remove('hidden');
+  }
+  if (uploadArea) {
+    uploadArea.classList.add('hidden');
+  }
 }
 
-function clearFile() {
-  elements.fileInput.value = '';
-  elements.fileInfo.classList.add('hidden');
-  elements.uploadArea.classList.remove('hidden');
-  resetApp();
-}
-
-function showProcessing(show) {
-  elements.processingStatus.classList.toggle('hidden', !show);
-}
-
-// ============================================
-// DATA PROCESSING
-// ============================================
-
-function processInstagramData(data) {
+function processData(data) {
   try {
     // Extract followers
+    app.followers = [];
+    app.following = [];
+    
     if (data.followers_and_following && data.followers_and_following.followers) {
-      appState.followers = data.followers_and_following.followers.map(f => {
+      app.followers = data.followers_and_following.followers.map(f => {
         const str = JSON.stringify(f);
         const match = str.match(/"value":"([^"]+)"/);
         return match ? match[1] : '';
       }).filter(Boolean);
     }
-    
-    // Extract following
+
     if (data.followers_and_following && data.followers_and_following.following) {
-      appState.following = data.followers_and_following.following.map(f => {
+      app.following = data.followers_and_following.following.map(f => {
         const str = JSON.stringify(f);
         const match = str.match(/"value":"([^"]+)"/);
         return match ? match[1] : '';
       }).filter(Boolean);
     }
-    
+
     // Calculate relationships
-    calculateRelationships();
+    const followerSet = new Set(app.followers);
+    const followingSet = new Set(app.following);
     
+    app.notFollowingBack = app.following.filter(user => !followerSet.has(user));
+    app.youDontFollow = app.followers.filter(user => !followingSet.has(user));
+
     // Update UI
     updateStats();
     generateCharts();
     generateInsights();
     populateLists();
     generateReport();
-    
-    // Show sections
     showSections();
-    showToast('Datos procesados correctamente', 'success');
-    
+    showToast('✓ Datos cargados correctamente', 'success');
+
   } catch (error) {
-    console.error('Error processing data:', error);
+    console.error('Error:', error);
     showToast('Error al procesar los datos', 'error');
   }
 }
 
-function calculateRelationships() {
-  const followerSet = new Set(appState.followers);
-  const followingSet = new Set(appState.following);
-  
-  // Not following back
-  appState.notFollowingBack = appState.following.filter(user => !followerSet.has(user));
-  
-  // You don't follow
-  appState.youDontFollow = appState.followers.filter(user => !followingSet.has(user));
-  
-  // Initialize filtered data
-  appState.filteredData.notFollowingBack = [...appState.notFollowingBack];
-  appState.filteredData.youDontFollow = [...appState.youDontFollow];
-}
-
-// ============================================
-// UI UPDATES
-// ============================================
-
 function updateStats() {
-  elements.followersCount.textContent = formatNumber(appState.followers.length);
-  elements.followingCount.textContent = formatNumber(appState.following.length);
-  elements.notFollowingBackCount.textContent = formatNumber(appState.notFollowingBack.length);
-  elements.youDontFollowCount.textContent = formatNumber(appState.youDontFollow.length);
+  document.getElementById('followersCount').textContent = app.followers.length.toLocaleString();
+  document.getElementById('followingCount').textContent = app.following.length.toLocaleString();
+  document.getElementById('notFollowingBackCount').textContent = app.notFollowingBack.length.toLocaleString();
+  document.getElementById('youDontFollowCount').textContent = app.youDontFollow.length.toLocaleString();
 }
 
 function generateCharts() {
   // Destroy existing charts
-  if (appState.charts.relationship) appState.charts.relationship.destroy();
-  if (appState.charts.followAnalysis) appState.charts.followAnalysis.destroy();
-  
+  if (app.charts.relationship) app.charts.relationship.destroy();
+  if (app.charts.followAnalysis) app.charts.followAnalysis.destroy();
+
+  const mutualCount = app.followers.length - app.youDontFollow.length;
+
   // Relationship Chart
-  const relationshipCtx = elements.relationshipChart.getContext('2d');
-  appState.charts.relationship = new Chart(relationshipCtx, {
-    type: 'doughnut',
-    data: {
-      labels: ['Mutuos', 'No te siguen', 'Te siguen pero no los sigues'],
-      datasets: [{
-        data: [
-          appState.followers.length - appState.youDontFollow.length,
-          appState.notFollowingBack.length,
-          appState.youDontFollow.length
-        ],
-        backgroundColor: ['#4A5D4A', '#8B3A3A', '#3A4F6B'],
-        borderColor: '#C9A24D',
-        borderWidth: 2
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: true,
-      plugins: {
-        legend: {
-          labels: { color: '#F5F5F5', font: { size: 12 } }
-        }
-      }
-    }
-  });
-  
-  // Follow Analysis Chart
-  const followAnalysisCtx = elements.followAnalysisChart.getContext('2d');
-  appState.charts.followAnalysis = new Chart(followAnalysisCtx, {
-    type: 'bar',
-    data: {
-      labels: ['Seguidores', 'Siguiendo', 'No te siguen', 'Te siguen pero no los sigues'],
-      datasets: [{
-        label: 'Cantidad',
-        data: [
-          appState.followers.length,
-          appState.following.length,
-          appState.notFollowingBack.length,
-          appState.youDontFollow.length
-        ],
-        backgroundColor: ['#3A4F6B', '#4A5D4A', '#8B3A3A', '#C9A24D'],
-        borderColor: '#C9A24D',
-        borderWidth: 1
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: true,
-      plugins: {
-        legend: {
-          labels: { color: '#F5F5F5' }
-        }
+  const relationshipCtx = document.getElementById('relationshipChart');
+  if (relationshipCtx) {
+    app.charts.relationship = new Chart(relationshipCtx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Mutuos', 'No te siguen', 'Te siguen pero no los sigues'],
+        datasets: [{
+          data: [mutualCount, app.notFollowingBack.length, app.youDontFollow.length],
+          backgroundColor: ['#4A5D4A', '#8B3A3A', '#3A4F6B'],
+          borderColor: '#C9A24D',
+          borderWidth: 2
+        }]
       },
-      scales: {
-        y: {
-          ticks: { color: '#B8B8B8' },
-          grid: { color: '#2E3F2F' }
-        },
-        x: {
-          ticks: { color: '#B8B8B8' },
-          grid: { color: '#2E3F2F' }
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+          legend: {
+            labels: { color: '#F5F5F5', font: { size: 12 } }
+          }
         }
       }
-    }
-  });
+    });
+  }
+
+  // Follow Analysis Chart
+  const followAnalysisCtx = document.getElementById('followAnalysisChart');
+  if (followAnalysisCtx) {
+    app.charts.followAnalysis = new Chart(followAnalysisCtx, {
+      type: 'bar',
+      data: {
+        labels: ['Seguidores', 'Siguiendo', 'No te siguen', 'Te siguen pero no los sigues'],
+        datasets: [{
+          label: 'Cantidad',
+          data: [app.followers.length, app.following.length, app.notFollowingBack.length, app.youDontFollow.length],
+          backgroundColor: ['#3A4F6B', '#4A5D4A', '#8B3A3A', '#C9A24D'],
+          borderColor: '#C9A24D',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+          legend: {
+            labels: { color: '#F5F5F5' }
+          }
+        },
+        scales: {
+          y: {
+            ticks: { color: '#B8B8B8' },
+            grid: { color: '#2E3F2F' }
+          },
+          x: {
+            ticks: { color: '#B8B8B8' },
+            grid: { color: '#2E3F2F' }
+          }
+        }
+      }
+    });
+  }
 }
 
 function generateInsights() {
   const insightsList = document.getElementById('insightsList');
+  if (!insightsList) return;
+
   insightsList.innerHTML = '';
-  
+
   const insights = [
-    {
-      text: `Tienes ${appState.followers.length.toLocaleString()} seguidores`,
-      icon: '👥'
-    },
-    {
-      text: `Sigues a ${appState.following.length.toLocaleString()} usuarios`,
-      icon: '🔗'
-    },
-    {
-      text: `${appState.notFollowingBack.length.toLocaleString()} usuarios no te siguen de vuelta`,
-      icon: '❌'
-    },
-    {
-      text: `${appState.youDontFollow.length.toLocaleString()} usuarios te siguen pero no los sigues`,
-      icon: '✅'
-    },
-    {
-      text: `Ratio de seguimiento: ${((appState.following.length / appState.followers.length) * 100).toFixed(1)}%`,
-      icon: '📊'
-    }
+    `👥 Tienes ${app.followers.length.toLocaleString()} seguidores`,
+    `🔗 Sigues a ${app.following.length.toLocaleString()} usuarios`,
+    `❌ ${app.notFollowingBack.length.toLocaleString()} usuarios no te siguen de vuelta`,
+    `✅ ${app.youDontFollow.length.toLocaleString()} usuarios te siguen pero no los sigues`,
+    `📊 Ratio: ${((app.following.length / app.followers.length) * 100).toFixed(1)}%`
   ];
-  
+
   insights.forEach(insight => {
     const item = document.createElement('div');
     item.className = 'insight-item';
-    item.innerHTML = `<span>${insight.icon}</span> ${insight.text}`;
+    item.textContent = insight;
     insightsList.appendChild(item);
   });
 }
 
 function populateLists() {
-  populateList('notFollowingBack', appState.notFollowingBack, elements.notFollowingBackList);
-  populateList('youDontFollow', appState.youDontFollow, elements.youDontFollowList);
+  populateList('notFollowingBack', app.notFollowingBack);
+  populateList('youDontFollow', app.youDontFollow);
   
-  // Update counts
-  document.getElementById('notFollowingBackCount2').textContent = `${appState.notFollowingBack.length} usuarios`;
-  document.getElementById('youDontFollowCount2').textContent = `${appState.youDontFollow.length} usuarios`;
+  document.getElementById('notFollowingBackCount2').textContent = `${app.notFollowingBack.length} usuarios`;
+  document.getElementById('youDontFollowCount2').textContent = `${app.youDontFollow.length} usuarios`;
 }
 
-function populateList(type, users, container) {
+function populateList(type, users) {
+  const container = type === 'notFollowingBack' 
+    ? document.getElementById('notFollowingBackList')
+    : document.getElementById('youDontFollowList');
+
+  if (!container) return;
+
   container.innerHTML = '';
-  users.forEach((user, index) => {
+  users.forEach(user => {
     const item = document.createElement('div');
     item.className = 'user-item';
     item.innerHTML = `
-      <div>
-        <div class="user-name">@${user}</div>
-      </div>
+      <div class="user-name">@${user}</div>
+      <button class="btn-secondary" onclick="copyToClipboard('@${user}')">📋</button>
+    `;
+    container.appendChild(item);
+  });
+}
+
+function filterList(type) {
+  const searchInput = type === 'notFollowingBack'
+    ? document.getElementById('notFollowingBackSearch')
+    : document.getElementById('youDontFollowSearch');
+
+  if (!searchInput) return;
+
+  const query = searchInput.value.toLowerCase();
+  const users = type === 'notFollowingBack' ? app.notFollowingBack : app.youDontFollow;
+  const filtered = users.filter(u => u.toLowerCase().includes(query));
+
+  const container = type === 'notFollowingBack'
+    ? document.getElementById('notFollowingBackList')
+    : document.getElementById('youDontFollowList');
+
+  if (!container) return;
+
+  container.innerHTML = '';
+  filtered.forEach(user => {
+    const item = document.createElement('div');
+    item.className = 'user-item';
+    item.innerHTML = `
+      <div class="user-name">@${user}</div>
       <button class="btn-secondary" onclick="copyToClipboard('@${user}')">📋</button>
     `;
     container.appendChild(item);
@@ -370,8 +307,7 @@ function populateList(type, users, container) {
 }
 
 function generateReport() {
-  const report = `
-REPORTE DE ANÁLISIS - SOCIAL INSIGHT
+  const report = `REPORTE DE ANÁLISIS - SOCIAL INSIGHT
 =====================================
 
 Fecha: ${new Date().toLocaleDateString('es-ES')}
@@ -379,84 +315,58 @@ Hora: ${new Date().toLocaleTimeString('es-ES')}
 
 ESTADÍSTICAS GENERALES
 ======================
-Seguidores: ${appState.followers.length.toLocaleString()}
-Siguiendo: ${appState.following.length.toLocaleString()}
-No te siguen de vuelta: ${appState.notFollowingBack.length.toLocaleString()}
-Te siguen pero no los sigues: ${appState.youDontFollow.length.toLocaleString()}
+Seguidores: ${app.followers.length.toLocaleString()}
+Siguiendo: ${app.following.length.toLocaleString()}
+No te siguen de vuelta: ${app.notFollowingBack.length.toLocaleString()}
+Te siguen pero no los sigues: ${app.youDontFollow.length.toLocaleString()}
 
 ANÁLISIS
 ========
-Ratio de seguimiento: ${((appState.following.length / appState.followers.length) * 100).toFixed(2)}%
-Porcentaje de no-followers: ${((appState.notFollowingBack.length / appState.following.length) * 100).toFixed(2)}%
-Porcentaje de seguidores no seguidos: ${((appState.youDontFollow.length / appState.followers.length) * 100).toFixed(2)}%
+Ratio de seguimiento: ${((app.following.length / app.followers.length) * 100).toFixed(2)}%
+Porcentaje de no-followers: ${((app.notFollowingBack.length / app.following.length) * 100).toFixed(2)}%
 
-USUARIOS QUE NO TE SIGUEN DE VUELTA (${appState.notFollowingBack.length})
+USUARIOS QUE NO TE SIGUEN DE VUELTA (${app.notFollowingBack.length})
 ${'='.repeat(50)}
-${appState.notFollowingBack.slice(0, 100).map((u, i) => `${i + 1}. @${u}`).join('\n')}
-${appState.notFollowingBack.length > 100 ? `\n... y ${appState.notFollowingBack.length - 100} más` : ''}
+${app.notFollowingBack.slice(0, 100).map((u, i) => `${i + 1}. @${u}`).join('\n')}
+${app.notFollowingBack.length > 100 ? `\n... y ${app.notFollowingBack.length - 100} más` : ''}
 
-USUARIOS QUE TE SIGUEN PERO NO LOS SIGUES (${appState.youDontFollow.length})
+USUARIOS QUE TE SIGUEN PERO NO LOS SIGUES (${app.youDontFollow.length})
 ${'='.repeat(50)}
-${appState.youDontFollow.slice(0, 100).map((u, i) => `${i + 1}. @${u}`).join('\n')}
-${appState.youDontFollow.length > 100 ? `\n... y ${appState.youDontFollow.length - 100} más` : ''}
+${app.youDontFollow.slice(0, 100).map((u, i) => `${i + 1}. @${u}`).join('\n')}
+${app.youDontFollow.length > 100 ? `\n... y ${app.youDontFollow.length - 100} más` : ''}
 
-Generado por Social Insight - Art Programs Studio
-  `;
-  
-  elements.reportText.textContent = report;
+Generado por Social Insight - Art Programs Studio`;
+
+  const reportText = document.getElementById('reportText');
+  if (reportText) {
+    reportText.textContent = report;
+  }
 }
-
-// ============================================
-// FILTERING & SEARCHING
-// ============================================
-
-function filterList(type) {
-  const searchInput = type === 'notFollowingBack' 
-    ? elements.notFollowingBackSearch 
-    : elements.youDontFollowSearch;
-  
-  const query = searchInput.value.toLowerCase();
-  const sourceList = type === 'notFollowingBack' 
-    ? appState.notFollowingBack 
-    : appState.youDontFollow;
-  
-  appState.filteredData[type] = sourceList.filter(user => 
-    user.toLowerCase().includes(query)
-  );
-  
-  const container = type === 'notFollowingBack' 
-    ? elements.notFollowingBackList 
-    : elements.youDontFollowList;
-  
-  populateList(type, appState.filteredData[type], container);
-}
-
-// ============================================
-// DOWNLOADS & EXPORTS
-// ============================================
 
 function downloadList(type) {
-  const users = appState.filteredData[type] || (type === 'notFollowingBack' ? appState.notFollowingBack : appState.youDontFollow);
+  const users = type === 'notFollowingBack' ? app.notFollowingBack : app.youDontFollow;
   const csv = users.join('\n');
   const filename = `${type}_${new Date().toISOString().split('T')[0]}.csv`;
   downloadFile(csv, filename, 'text/csv');
 }
 
 function downloadReport(format) {
+  const reportText = document.getElementById('reportText').textContent;
+  
   if (format === 'txt') {
-    downloadFile(elements.reportText.textContent, `reporte_${new Date().toISOString().split('T')[0]}.txt`, 'text/plain');
+    downloadFile(reportText, `reporte_${new Date().toISOString().split('T')[0]}.txt`, 'text/plain');
   } else if (format === 'json') {
     const data = {
       fecha: new Date().toISOString(),
       estadisticas: {
-        seguidores: appState.followers.length,
-        siguiendo: appState.following.length,
-        noTeSignenDeVuelta: appState.notFollowingBack.length,
-        teSignenPeroNoLosSigues: appState.youDontFollow.length
+        seguidores: app.followers.length,
+        siguiendo: app.following.length,
+        noTeSignenDeVuelta: app.notFollowingBack.length,
+        teSignenPeroNoLosSigues: app.youDontFollow.length
       },
       usuarios: {
-        noTeSignenDeVuelta: appState.notFollowingBack,
-        teSignenPeroNoLosSigues: appState.youDontFollow
+        noTeSignenDeVuelta: app.notFollowingBack,
+        teSignenPeroNoLosSigues: app.youDontFollow
       }
     };
     downloadFile(JSON.stringify(data, null, 2), `reporte_${new Date().toISOString().split('T')[0]}.json`, 'application/json');
@@ -477,7 +387,8 @@ function downloadFile(content, filename, type) {
 }
 
 function copyReport() {
-  navigator.clipboard.writeText(elements.reportText.textContent);
+  const reportText = document.getElementById('reportText').textContent;
+  navigator.clipboard.writeText(reportText);
   showToast('Reporte copiado al portapapeles', 'success');
 }
 
@@ -486,74 +397,49 @@ function copyToClipboard(text) {
   showToast('Copiado: ' + text, 'success');
 }
 
-// ============================================
-// NAVIGATION & TABS
-// ============================================
-
-function handleNavigation(section) {
-  // Update active nav item
-  elements.navItems.forEach(item => item.classList.remove('active'));
+function navigateToSection(section) {
+  document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
   document.querySelector(`[data-section="${section}"]`).classList.add('active');
-  
-  // Show/hide sections
-  elements.uploadSection.classList.toggle('hidden', section !== 'upload');
-  elements.analyticsSection.classList.toggle('hidden', section !== 'analytics');
-  elements.listsSection.classList.toggle('hidden', section !== 'lists');
-  elements.reportSection.classList.toggle('hidden', section !== 'report');
+
+  document.getElementById('uploadSection').classList.toggle('hidden', section !== 'upload');
+  document.getElementById('analyticsSection').classList.toggle('hidden', section !== 'analytics');
+  document.getElementById('listsSection').classList.toggle('hidden', section !== 'lists');
+  document.getElementById('reportSection').classList.toggle('hidden', section !== 'report');
 }
 
-function handleTabChange(tab) {
-  // Update active tab button
-  elements.tabButtons.forEach(btn => btn.classList.remove('active'));
+function switchTab(tab) {
+  document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
   document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
-  
-  // Show/hide tab panes
+
   document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
   document.getElementById(`${tab}Tab`).classList.add('active');
 }
 
-// ============================================
-// UI HELPERS
-// ============================================
-
 function showSections() {
-  elements.uploadSection.classList.remove('hidden');
-  elements.analyticsSection.classList.remove('hidden');
-  elements.listsSection.classList.remove('hidden');
-  elements.reportSection.classList.remove('hidden');
-  elements.emptyState.classList.remove('active');
-}
-
-function resetApp() {
-  appState.data = null;
-  appState.followers = [];
-  appState.following = [];
-  appState.notFollowingBack = [];
-  appState.youDontFollow = [];
-  
-  elements.uploadSection.classList.remove('hidden');
-  elements.analyticsSection.classList.add('hidden');
-  elements.listsSection.classList.add('hidden');
-  elements.reportSection.classList.add('hidden');
-  elements.emptyState.classList.add('active');
+  document.getElementById('uploadSection').classList.remove('hidden');
+  document.getElementById('analyticsSection').classList.remove('hidden');
+  document.getElementById('listsSection').classList.remove('hidden');
+  document.getElementById('reportSection').classList.remove('hidden');
+  document.getElementById('emptyState').classList.remove('active');
 }
 
 function hideLoadingScreen() {
   setTimeout(() => {
-    elements.loadingScreen.style.opacity = '0';
-    elements.loadingScreen.style.pointerEvents = 'none';
+    const loadingScreen = document.getElementById('loadingScreen');
+    if (loadingScreen) {
+      loadingScreen.style.opacity = '0';
+      loadingScreen.style.pointerEvents = 'none';
+    }
   }, 1500);
 }
 
 function showToast(message, type = 'info') {
-  elements.toast.textContent = message;
-  elements.toast.classList.add('show');
-  
-  setTimeout(() => {
-    elements.toast.classList.remove('show');
-  }, 3000);
-}
-
-function formatNumber(num) {
-  return num.toLocaleString('es-ES');
+  const toast = document.getElementById('toast');
+  if (toast) {
+    toast.textContent = message;
+    toast.classList.add('show');
+    setTimeout(() => {
+      toast.classList.remove('show');
+    }, 3000);
+  }
 }
