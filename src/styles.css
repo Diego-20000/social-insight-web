@@ -20,15 +20,72 @@
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    background-color: var(--background);
+    background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%);
     color: var(--text-primary);
     line-height: 1.6;
+    overflow-x: hidden;
+}
+
+/* Animaciones globales */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+@keyframes shimmer {
+    0% { background-position: -1000px 0; }
+    100% { background-position: 1000px 0; }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
 }
 
 .container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 20px;
+    animation: fadeInUp 0.6s ease-out;
 }
 
 /* Header */
@@ -38,19 +95,45 @@ body {
     padding: 60px 20px;
     text-align: center;
     margin-bottom: 40px;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(225, 48, 108, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 500px;
+    height: 500px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(20px); }
+}
+
+.header-content {
+    position: relative;
+    z-index: 1;
 }
 
 .header-content h1 {
     font-size: 2.5rem;
     margin-bottom: 10px;
     font-weight: 700;
+    animation: slideInLeft 0.8s ease-out;
 }
 
 .header-content .subtitle {
     font-size: 1.1rem;
     opacity: 0.95;
+    animation: slideInLeft 0.8s ease-out 0.1s both;
 }
 
 /* Upload Section */
@@ -61,10 +144,17 @@ body {
 .upload-card {
     background: var(--surface);
     padding: 40px;
-    border-radius: 12px;
+    border-radius: 16px;
     text-align: center;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     border: 2px solid var(--border-color);
+    animation: fadeInUp 0.6s ease-out 0.2s both;
+    transition: all 0.3s ease;
+}
+
+.upload-card:hover {
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    border-color: var(--primary-color);
 }
 
 .upload-card h2 {
@@ -94,15 +184,32 @@ body {
     padding: 20px 40px;
     background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
     color: white;
-    border-radius: 8px;
+    border-radius: 12px;
     cursor: pointer;
     font-weight: 600;
-    transition: transform 0.2s, box-shadow 0.2s;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.file-label::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.2);
+    transition: left 0.5s ease;
+}
+
+.file-label:hover::before {
+    left: 100%;
 }
 
 .file-label:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(225, 48, 108, 0.3);
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 12px 24px rgba(225, 48, 108, 0.4);
 }
 
 .upload-icon {
@@ -153,22 +260,25 @@ body {
 .stat-card {
     background: var(--surface);
     padding: 25px;
-    border-radius: 12px;
+    border-radius: 16px;
     display: flex;
     align-items: center;
     gap: 20px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
     border-left: 4px solid var(--primary-color);
-    transition: transform 0.2s, box-shadow 0.2s;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    animation: fadeInUp 0.6s ease-out;
 }
 
 .stat-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+    border-left-color: var(--secondary-color);
 }
 
 .stat-icon {
     font-size: 2.5rem;
+    animation: pulse 2s ease-in-out infinite;
 }
 
 .stat-content h3 {
@@ -202,8 +312,14 @@ body {
 .chart-container {
     background: var(--surface);
     padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    animation: fadeInUp 0.6s ease-out;
+    transition: all 0.3s ease;
+}
+
+.chart-container:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
 
 .chart-container h3 {
@@ -233,8 +349,14 @@ body {
 .list-panel {
     background: var(--surface);
     padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    animation: fadeInUp 0.6s ease-out;
+    transition: all 0.3s ease;
+}
+
+.list-panel:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
 
 .list-panel h3 {
@@ -267,14 +389,16 @@ body {
     background: var(--primary-color);
     color: white;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     cursor: pointer;
     font-weight: 600;
-    transition: background 0.2s;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .download-btn:hover {
     background: #d81b60;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(225, 48, 108, 0.3);
 }
 
 .user-list {
@@ -290,11 +414,14 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    transition: background 0.2s;
+    transition: all 0.2s ease;
+    animation: slideInLeft 0.4s ease-out;
 }
 
 .user-item:hover {
     background: var(--background);
+    padding-left: 20px;
+    border-left: 3px solid var(--primary-color);
 }
 
 .user-item:last-child {

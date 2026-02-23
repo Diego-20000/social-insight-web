@@ -1,0 +1,66 @@
+{
+  "followers_1": [
+    {
+      "title": "",
+      "media_list_data": [],
+      "string_list_data": [
+        {
+          "href": "https://www.instagram.com/usuario1",
+          "value": "usuario1",
+          "timestamp": 1771743746
+        }
+      ]
+    },
+    {
+      "title": "",
+      "media_list_data": [],
+      "string_list_data": [
+        {
+          "href": "https://www.instagram.com/usuario2",
+          "value": "usuario2",
+          "timestamp": 1771721690
+        }
+      ]
+    },
+    {
+      "title": "",
+      "media_list_data": [],
+      "string_list_data": [
+        {
+          "href": "https://www.instagram.com/usuario3",
+          "value": "usuario3",
+          "timestamp": 1771592279
+        }
+      ]
+    }
+  ],
+  "relationships_following": [
+    {
+      "title": "usuario1",
+      "string_list_data": [
+        {
+          "href": "https://www.instagram.com/_u/usuario1",
+          "timestamp": 1771814956
+        }
+      ]
+    },
+    {
+      "title": "usuario4",
+      "string_list_data": [
+        {
+          "href": "https://www.instagram.com/_u/usuario4",
+          "timestamp": 1771781552
+        }
+      ]
+    },
+    {
+      "title": "usuario5",
+      "string_list_data": [
+        {
+          "href": "https://www.instagram.com/_u/usuario5",
+          "timestamp": 1771679374
+        }
+      ]
+    }
+  ]
+}
