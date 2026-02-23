@@ -1,6 +1,6 @@
 import { initializeCharts } from './charts.js';
-import { processInstagramData, analyzeFollowers } from './analyzer.js';
-import { renderUserLists, downloadCSV } from './ui.js';
+import { processInstagramData, analyzeFollowers, searchUsers, sortUsers } from './analyzer.js';
+import { renderUserLists, downloadCSV, filterAndRenderList, downloadReport, showNotification } from './ui.js';
 
 // Estado global
 let analysisData = null;
@@ -30,11 +30,11 @@ document.getElementById('downloadYouDontFollow')?.addEventListener('click', () =
 
 // Búsqueda en tiempo real
 document.getElementById('notFollowingBackSearch')?.addEventListener('input', (e) => {
-    filterUserList('notFollowingBackList', e.target.value);
+    filterAndRenderList('notFollowingBackList', e.target.value);
 });
 
 document.getElementById('youDontFollowSearch')?.addEventListener('input', (e) => {
-    filterUserList('youDontFollowList', e.target.value);
+    filterAndRenderList('youDontFollowList', e.target.value);
 });
 
 /**
@@ -116,20 +116,7 @@ function displayResults() {
     }, 100);
 }
 
-/**
- * Filtra la lista de usuarios según el término de búsqueda
- */
-function filterUserList(listId, searchTerm) {
-    const list = document.getElementById(listId);
-    const items = list.querySelectorAll('.user-item');
-    const term = searchTerm.toLowerCase();
 
-    items.forEach(item => {
-        const userName = item.querySelector('.user-name').textContent.toLowerCase();
-        const isVisible = userName.includes(term);
-        item.style.display = isVisible ? '' : 'none';
-    });
-}
 
 // Log de inicialización
 console.log('Social Insight - Aplicación iniciada');

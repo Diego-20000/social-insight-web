@@ -75,11 +75,17 @@ export function processInstagramData(data) {
         u => !followingSet.has(u.username.toLowerCase())
     );
 
+    // Encontrar seguidores mutuos
+    const mutualFollows = followersList.filter(
+        u => followingSet.has(u.username.toLowerCase())
+    );
+
     return {
         followers: followersSet.size,
         following: followingSet.size,
         notFollowingBack,
         youDontFollow,
+        mutualFollows,
         followersList,
         followingList,
         followersSet,
@@ -96,8 +102,9 @@ export function analyzeFollowers(data) {
         totalFollowing: data.following,
         notFollowingBack: data.notFollowingBack.length,
         youDontFollow: data.youDontFollow.length,
-        mutualFollows: data.followers - data.youDontFollow.length,
-        followRatio: data.followers > 0 ? (data.following / data.followers * 100).toFixed(2) : 0
+        mutualFollows: data.mutualFollows.length,
+        followRatio: data.followers > 0 ? (data.following / data.followers * 100).toFixed(2) : 0,
+        engagementRate: data.followers > 0 ? (data.mutualFollows.length / data.followers * 100).toFixed(2) : 0
     };
 
     return stats;
@@ -111,12 +118,12 @@ export function generateChartData(data) {
 
     return {
         relationshipChart: {
-            labels: ['Te siguen y los sigues', 'Te siguen pero no los sigues', 'Los sigues pero no te siguen'],
+            labels: ['Seguidores mutuos', 'Te siguen pero no los sigues', 'Los sigues pero no te siguen'],
             datasets: [{
                 data: [
-                    stats.totalFollowers - stats.youDontFollow.length,
-                    stats.youDontFollow.length,
-                    stats.notFollowingBack.length
+                    stats.mutualFollows,
+                    stats.youDontFollow,
+                    stats.notFollowingBack
                 ],
                 backgroundColor: [
                     '#31a24c',
@@ -149,5 +156,58 @@ export function generateChartData(data) {
                 borderWidth: 2
             }]
         }
+    };
+}
+
+/**
+ * Ordena usuarios por criterio
+ */
+export function sortUsers(users, sortBy = 'username') {
+    const sorted = [...users];
+    
+    switch(sortBy) {
+        case 'username':
+            sorted.sort((a, b) => a.username.localeCompare(b.username));
+            break;
+        case 'recent':
+            sorted.sort((a, b) => b.timestamp - a.timestamp);
+            break;
+        case 'oldest':
+            sorted.sort((a, b) => a.timestamp - b.timestamp);
+            break;
+        default:
+            sorted.sort((a, b) => a.username.localeCompare(b.username));
+    }
+    
+    return sorted;
+}
+
+/**
+ * Busca usuarios por término
+ */
+export function searchUsers(users, searchTerm) {
+    if (!searchTerm) return users;
+    
+    const term = searchTerm.toLowerCase();
+    return users.filter(user => 
+        user.username.toLowerCase().includes(term)
+    );
+}
+
+/**
+ * Obtiene estadísticas detalladas
+ */
+export function getDetailedStats(data) {
+    const stats = analyzeFollowers(data);
+    
+    return {
+        ...stats,
+        totalAccounts: stats.totalFollowers + stats.notFollowingBack,
+        unfollowPercentage: stats.totalFollowing > 0 
+            ? (stats.notFollowingBack / stats.totalFollowing * 100).toFixed(2) 
+            : 0,
+        followBackPercentage: stats.totalFollowing > 0 
+            ? (stats.mutualFollows / stats.totalFollowing * 100).toFixed(2) 
+            : 0
     };
 }
