@@ -1,8 +1,8 @@
-# Especificaciones Técnicas - Nexus IG Analyzer
+# Especificaciones Técnicas - Social Insight
 
 ## 📋 Resumen Ejecutivo
 
-**Nexus IG Analyzer** es una aplicación web de análisis de datos de Instagram que procesa información exportada por el usuario y proporciona visualizaciones interactivas y análisis detallados. Es parte del ecosistema **Nexus** de Art Programs Studio, conectada a un servidor central para autenticación y gestión de suscripciones.
+**Social Insight** es una aplicación web de análisis de datos de Instagram que procesa información exportada por el usuario y proporciona visualizaciones interactivas y análisis detallados.
 
 ## 🏗️ Arquitectura
 
@@ -141,8 +141,7 @@ Funciones clave:
 - Edge 90+
 
 ### Dependencias Externas
-- Nexus Server (para autenticación y suscripciones)
-- Chart.js (CDN)
+- Chart.js (CDN) - Visualización de gráficos
 - Ninguna otra dependencia de runtime
 
 ### Dispositivos
@@ -227,29 +226,6 @@ npm run preview
 ---
 
 **Versión**: 1.0.0  
-**Última actualización**: Febrero 2026  
-**Empresa**: Art Programs Studio  
-**Ecosistema**: Nexus
+**Última actualización**: Febrero 2026
 
----
 
-## 🔗 Integración con Nexus Server
-
-Nexus IG Analyzer se conecta con el servidor central para:
-
-### Autenticación
-- Verificar credenciales de Nexus Account
-- Mantener sesiones sincronizadas
-- Renovar tokens JWT
-
-### Verificación de Suscripción
-- Verificar si usuario tiene acceso premium activo
-- Bloquear acceso si suscripción expiró
-- Mostrar opción de canjear puntos
-
-### Endpoints Utilizados
-```
-GET  /api/auth/verify          - Verificar token
-GET  /api/subscriptions/active - Verificar suscripción IG Analyzer
-POST /api/subscriptions/redeem - Canjear puntos
-```
