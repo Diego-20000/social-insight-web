@@ -1,10 +1,8 @@
-# Nexus IG Analyzer 📊
+# Social Insight 📊
 
 **Herramienta de análisis profundo de datos de Instagram**
 
-*Parte del ecosistema Nexus por Art Programs Studio*
-
-Nexus IG Analyzer es una aplicación web que te permite analizar y visualizar tus datos exportados de Instagram. Descubre quién no te sigue de vuelta, estadísticas detalladas y más, sin necesidad de compartir tu contraseña.
+Social Insight es una aplicación web que te permite analizar y visualizar tus datos exportados de Instagram. Descubre quién no te sigue de vuelta, estadísticas detalladas y más, sin necesidad de compartir tu contraseña.
 
 ## Características
 
@@ -144,10 +142,7 @@ Este proyecto está bajo la licencia MIT. Ver archivo `LICENSE` para más detall
 
 ---
 
-**Nexus IG Analyzer** es parte del ecosistema Nexus, que incluye:
-- 🎬 **Nexus Ads** - App de monetización con recompensas
-- 📍 **Nexus Reminders** - Recordatorios por ubicación
-- 🔐 **Nexus Server** - Backend centralizado
+
 
 ## Soporte
 
@@ -155,4 +150,4 @@ Si encuentras problemas o tienes sugerencias, por favor abre un [Issue](https://
 
 ---
 
-**Hecho con ❤️ por Art Programs Studio**
+**Hecho con ❤️ para analistas de redes sociales**
