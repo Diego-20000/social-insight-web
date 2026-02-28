@@ -1,153 +1,243 @@
-# Social Insight 📊
-https://Diego-20000.github.io/social-insight-web/
-**Herramienta de análisis profundo de datos de Instagram**
+# 🎨 ArtPrograms Studio - Code Showcase
 
-Social Insight es una aplicación web que te permite analizar y visualizar tus datos exportados de Instagram. Descubre quién no te sigue de vuelta, estadísticas detalladas y más, sin necesidad de compartir tu contraseña.
+Catálogo interactivo de componentes frontend premium con animaciones y efectos visuales de alta calidad. Una plataforma profesional y moderna que funciona como un catálogo interactivo de componentes frontend premium.
 
-## Características
+## 📋 Descripción Ejecutiva
 
-✨ **Análisis Completo**
-- Visualiza tus seguidores y cuentas que sigues
-- Identifica quién no te sigue de vuelta
-- Descubre quién te sigue pero no lo sigues
-- Estadísticas detalladas con gráficos interactivos
+**ArtPrograms Studio - Code Showcase** es una plataforma web profesional diseñada para proporcionar a desarrolladores y diseñadores acceso a demostraciones funcionales de animaciones, efectos visuales y componentes UI de alta calidad, con la capacidad de visualizar, copiar y reutilizar el código fuente de cada ejemplo.
 
-📊 **Visualización de Datos**
-- Gráficos interactivos con Chart.js
-- Distribución de relaciones en gráfico de dona
-- Análisis de seguimiento en gráfico de barras
+### Objetivos Principales
 
-📥 **Exportación de Datos**
-- Descarga listas en formato CSV
-- Fácil integración con otras herramientas
+- **Centralizar código frontend** de alta calidad de forma profesional
+- **Facilitar reutilización de código** permitiendo que otros desarrolladores copien y adapten componentes
+- **Crear experiencia de usuario premium** con diseño elegante, animaciones suaves y navegación intuitiva
+- **Escalabilidad futura** con arquitectura modular que permite agregar nuevos componentes fácilmente
+- **Documentación completa** con código bien comentado y documentación clara para cada componente
 
-🔍 **Búsqueda y Filtrado**
-- Busca usuarios en tiempo real
-- Filtra resultados instantáneamente
+## 🚀 Características Principales
 
-## Cómo usar
+### Para Desarrolladores
 
-### 1. Exportar datos de Instagram
+- Catálogo interactivo con búsqueda y filtrado
+- Visualización de componentes en vivo
+- Visor de código con syntax highlighting
+- Copiar código con un clic
+- Documentación detallada de cada componente
+- Ejemplos de uso y casos de aplicación
 
-1. Abre Instagram en tu navegador
-2. Ve a Configuración → Descargar tu información
-3. Selecciona "JSON" como formato
-4. Descarga tu archivo de datos
+### Componentes Iniciales
 
-### 2. Cargar datos en Social Insight
+1. **Login Lamp Animation** 💡
+   - Formulario de login interactivo con lámpara animada
+   - Efecto de iluminación gradual
+   - Sombras realistas
 
-1. Abre la aplicación web
-2. Haz clic en "Selecciona archivo JSON"
-3. Elige el archivo `connections.json` de tu descarga
-4. ¡Espera a que se procesen los datos!
+2. **Particle Effects** ✨
+   - Efecto de partículas animadas
+   - Múltiples modos (lluvia, explosión, órbita)
+   - Colisiones y rebotes realistas
 
-### 3. Analizar resultados
+3. **Glassmorphism Card** 🔮
+   - Tarjeta con efecto de vidrio esmerilado
+   - Bordes sutiles con gradiente
+   - Animaciones suaves
 
-- Visualiza tus estadísticas en tarjetas
-- Explora los gráficos interactivos
-- Busca usuarios específicos en las listas
-- Descarga listas como CSV
+## 🛠️ Stack Tecnológico
 
-## Estructura del Proyecto
+### Frontend
+
+| Tecnología | Versión | Propósito |
+|-----------|---------|----------|
+| React | 19 | Framework principal |
+| TypeScript | 5.9 | Tipado estático |
+| Tailwind CSS | 4 | Estilos y diseño responsivo |
+| Framer Motion | 12+ | Animaciones fluidas |
+| tRPC | 11 | Comunicación cliente-servidor |
+| React Query | 5 | Gestión de estado y caché |
+| Lucide React | 0.453 | Iconos profesionales |
+| Prism.js | Latest | Syntax highlighting |
+| Sonner | 2 | Notificaciones toast |
+
+### Backend
+
+| Tecnología | Versión | Propósito |
+|-----------|---------|----------|
+| Express.js | 4.21 | Servidor web |
+| Node.js | 22 | Runtime |
+| tRPC | 11 | API type-safe |
+| Drizzle ORM | 0.44 | ORM para base de datos |
+| MySQL | 8+ | Base de datos |
+| JWT | 6.1 | Autenticación |
+
+## 📁 Estructura del Proyecto
 
 ```
-social-insight-web/
-├── index.html              # Página principal
-├── package.json            # Dependencias
-├── README.md              # Este archivo
-├── src/
-│   ├── main.js            # Lógica principal
-│   ├── analyzer.js        # Análisis de datos
-│   ├── charts.js          # Gráficos
-│   ├── ui.js              # Interfaz de usuario
-│   └── styles.css         # Estilos
-└── public/                # Archivos estáticos
+artprograms-studio/
+├── client/                          # Aplicación React
+│   ├── src/
+│   │   ├── pages/                  # Páginas principales
+│   │   ├── components/             # Componentes reutilizables
+│   │   ├── hooks/                  # Custom hooks
+│   │   ├── lib/                    # Utilidades
+│   │   ├── App.tsx                 # Componente raíz
+│   │   ├── main.tsx                # Punto de entrada
+│   │   └── index.css               # Estilos globales
+│   ├── index.html                  # HTML principal
+│   ├── vite.config.ts              # Configuración Vite
+│   ├── tsconfig.json               # Configuración TypeScript
+│   └── package.json                # Dependencias del cliente
+│
+├── server/                          # Servidor Express
+│   ├── src/
+│   │   ├── core/                   # Configuración principal
+│   │   └── routes/                 # Rutas de API
+│   ├── drizzle/                    # Esquema y migraciones
+│   ├── drizzle.config.ts           # Configuración Drizzle
+│   └── package.json                # Dependencias del servidor
+│
+├── .env.example                    # Variables de entorno ejemplo
+├── package.json                    # Configuración del workspace
+└── README.md                       # Este archivo
 ```
 
-## Instalación Local
+## 🚀 Instalación y Setup
+
+### Requisitos Previos
+
+- Node.js 22+
+- npm o pnpm
+- MySQL 8+
+
+### Pasos de Instalación
+
+1. **Clonar el repositorio**
 
 ```bash
-# Clonar repositorio
 git clone https://github.com/Diego-20000/social-insight-web.git
 cd social-insight-web
-
-# Instalar dependencias
-npm install
-
-# Ejecutar en desarrollo
-npm run dev
-
-# Compilar para producción
-npm run build
 ```
 
-## Tecnologías
+2. **Instalar dependencias**
 
-- **Frontend**: HTML5, CSS3, JavaScript (ES6+)
-- **Visualización**: Chart.js
-- **Build**: Vite
-- **Estilos**: CSS personalizado con variables
+```bash
+npm install
+```
 
-## Características de Datos
+3. **Configurar variables de entorno**
 
-La aplicación procesa los siguientes datos de tu exportación de Instagram:
+```bash
+cp .env.example .env
+# Editar .env con tus configuraciones
+```
 
-- **Followers**: Lista completa de seguidores
-- **Following**: Lista de cuentas que sigues
-- **Blocked Profiles**: Perfiles bloqueados
-- **Restricted Profiles**: Perfiles restringidos
-- **Pending Requests**: Solicitudes pendientes
-- **Recent Requests**: Solicitudes recientes
+4. **Inicializar base de datos**
 
-## Privacidad
+```bash
+npm run db:push
+```
 
-⚠️ **Importante**: 
-- Todos los datos se procesan **localmente** en tu navegador
-- No se envía información a servidores externos
-- Los datos no se almacenan permanentemente
-- Solo se usan para análisis dentro de la sesión
+5. **Iniciar desarrollo**
 
-## Limitaciones
+```bash
+npm run dev
+```
 
-- El archivo JSON debe ser válido
-- Se requiere navegador moderno (Chrome, Firefox, Safari, Edge)
-- Máximo de usuarios procesables depende de la memoria del navegador
+La aplicación estará disponible en:
+- Frontend: http://localhost:5173
+- Backend: http://localhost:3000
 
-## Roadmap
+## 📚 Documentación de Componentes
 
-- [ ] Análisis de tendencias temporales
-- [ ] Comparación de períodos
-- [ ] Exportación de reportes PDF
-- [ ] Análisis de hashtags
-- [ ] Integración con API de Instagram (si es posible)
-- [ ] Aplicación móvil
+### Login Lamp Animation
 
-## Contribuir
+**Descripción**: Formulario de login interactivo con una lámpara que se enciende al tirar de una cuerda.
 
-Las contribuciones son bienvenidas. Por favor:
+**Características**:
+- Fondo completamente negro cuando la lámpara está apagada
+- Panel de login invisible hasta que se encienda la lámpara
+- Animación de cuerda con Framer Motion
+- Efecto de iluminación gradual
+- Sombras realistas de luz
 
-1. Fork el repositorio
-2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abre un Pull Request
+### Particle Effects
 
-## Licencia
+**Descripción**: Efecto de partículas animadas que crean una atmósfera visual dinámica.
 
-Este proyecto está bajo la licencia MIT. Ver archivo `LICENSE` para más detalles.
+**Características**:
+- Partículas que se mueven aleatoriamente
+- Colisiones y rebotes
+- Cambio de color dinámico
+- Diferentes modos (lluvia, explosión, órbita)
 
-## Empresa
+### Glassmorphism Card
 
-**Art Programs Studio** - [GitHub](https://github.com/Diego-20000)
+**Descripción**: Tarjeta con efecto de vidrio esmerilado con contenido interactivo.
+
+**Características**:
+- Fondo semi-transparente con blur
+- Bordes sutiles con gradiente
+- Sombras suaves y realistas
+- Efecto hover con cambio de opacidad
+
+## 🔐 Seguridad y Performance
+
+### Seguridad
+
+- Validación de entrada en servidor
+- Sanitización de código mostrado
+- CORS configurado correctamente
+- Protección contra XSS
+- Rate limiting en API
+- JWT para autenticación
+
+### Performance
+
+- Code splitting automático con Vite
+- Lazy loading de componentes
+- Optimización de imágenes
+- Caché de cliente con React Query
+- Minificación de CSS y JS
+
+## 🗺️ Características Futuras
+
+### Fase 2
+
+- Sistema de favoritos
+- Búsqueda y filtrado avanzado
+- Categorización por tecnología
+- Sistema de ratings y comentarios
+- Descarga de componentes como ZIP
+
+### Fase 3
+
+- Autenticación de usuarios
+- Historial de componentes visitados
+- Recomendaciones personalizadas
+- Blog con tutoriales
+- API pública para integración
+
+### Fase 4
+
+- Marketplace de componentes premium
+- Sistema de versiones
+- Integración con npm
+- Editor en línea
+- Exportación a diferentes frameworks
+
+## 📝 Contribuciones
+
+Las contribuciones son bienvenidas. Por favor, consulta CONTRIBUTING.md para más detalles.
+
+## 📄 Licencia
+
+Este proyecto está bajo la licencia MIT.
+
+## 👨‍💻 Autor
+
+Desarrollado con ❤️ por Diego
 
 ---
 
-
-
-## Soporte
-
-Si encuentras problemas o tienes sugerencias, por favor abre un [Issue](https://github.com/Diego-20000/social-insight-web/issues).
-
----
-
-**Hecho con ❤️ para analistas de redes sociales**
+**Versión**: 1.0.0  
+**Última actualización**: Febrero 2026  
+**Estado**: Listo para desarrollo

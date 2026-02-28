@@ -1,17 +1,34 @@
 {
-  "name": "social-insight-web",
+  "name": "artprograms-studio",
   "version": "1.0.0",
-  "description": "Herramienta de análisis de redes sociales para Instagram",
+  "description": "Catálogo interactivo de componentes frontend premium con animaciones y efectos visuales",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "dev": "concurrently \"npm run dev:client\" \"npm run dev:server\"",
+    "dev:client": "cd client && vite",
+    "dev:server": "cd server && tsx watch src/core/index.ts",
+    "build": "npm run build:client && npm run build:server",
+    "build:client": "cd client && vite build",
+    "build:server": "cd server && tsc",
+    "preview": "cd client && vite preview",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint . --ext .ts,.tsx",
+    "format": "prettier --write \"**/*.{ts,tsx,json,md}\"",
+    "db:push": "cd server && drizzle-kit push:mysql",
+    "db:generate": "cd server && drizzle-kit generate:mysql",
+    "db:studio": "cd server && drizzle-kit studio"
   },
+  "workspaces": [
+    "client",
+    "server"
+  ],
   "devDependencies": {
-    "vite": "^5.0.0"
-  },
-  "dependencies": {
-    "chart.js": "^4.4.0"
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "concurrently": "^8.2.0",
+    "eslint": "^8.50.0",
+    "prettier": "^3.0.0",
+    "typescript": "^5.9",
+    "tsx": "^4.7.0"
   }
 }
